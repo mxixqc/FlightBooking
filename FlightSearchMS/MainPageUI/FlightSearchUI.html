@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no"
+		/>
+		<meta name="description" content="" />
+		<meta name="author" content="" />
+		<title>Home - G1T1 Flight Booking System</title>
+		<!-- Favicon-->
+		<link rel="icon" type="image/x-icon" href="../public/assets/favicon.ico" />
+		<!-- Bootstrap icons-->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		<!-- Google fonts-->
+		<link
+			href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		<!-- Core theme CSS (includes Bootstrap)-->
+		<link href="../public/styles.css" rel="stylesheet" />
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<!-- Required for Autocomplete -->
+		<link
+			rel="stylesheet"
+			href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css"
+		/>
+		<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	</head>
+	<body>
+		<!-- Navigation-->
+		<nav class="navbar navbar-light bg-light static-top">
+			<div class="container">
+				<a class="navbar-brand" href="#!">G1T1 Flight Booking System</a>
+				<a class="btn btn-primary" href="./BookingHistoryUI.html"
+					>Past Bookings</a
+				>
+			</div>
+			<a class="btn btn-danger" onclick="logout()">Logout</a>
+		</nav>
+		<!-- Masthead-->
+		<header class="masthead">
+			<div class="container position-relative">
+				<div class="row justify-content-center">
+					<div class="col-xl-6">
+						<div class="text-center text-white">
+							<!-- Page heading-->
+							<h2 class="text-uppercase text-center mb-1">Search for Flight</h2>
+							<br />
+							<form id="flightForm" autocomplete="off">
+								<!-- Name input -->
+								<div class="row">
+									<div class="col-sm form-outline">
+										<label class="form-label" for="fname">No. Adults</label>
+										<input
+											value="1"
+											name="numAdults"
+											type="number"
+											id="numAdults"
+											class="form-control"
+											placeholder="How many Adults?"
+											required
+											autofocus
+										/>
+									</div>
+
+									<div class="col-sm form-outline">
+										<label class="form-label" for="lname">No. Children</label>
+										<input
+											value="1"
+											name="numChildren"
+											type="number"
+											id="numChildren"
+											class="form-control"
+											placeholder="how many Children?"
+											required
+											autofocus
+										/>
+									</div>
+
+									<div class="col-sm form-outline">
+										<label class="form-label" for="lname">No. Infants</label>
+										<input
+											value="1"
+											name="numInfants"
+											type="number"
+											id="numInfants"
+											class="form-control"
+											placeholder="How many Infants?"
+											required
+											autofocus
+										/>
+									</div>
+								</div>
+
+								<!-- Phone input -->
+								<div class="row">
+									<div class="col-sm form-outline">
+										<label class="form-label" for="SourceAirport">From:</label>
+										<input
+											class="form-control"
+											list="datalistOptionsFrom"
+											id="SourceAirport"
+											onkeyup="getPred(this)"
+										/>
+									</div>
+
+									<div class="col-sm form-outline">
+										<label class="form-label" for="DestAirport">To:</label>
+										<input
+											class="form-control"
+											list="datalistOptionsTo"
+											id="DestAirport"
+											onkeyup="getPred(this)"
+										/>
+									</div>
+								</div>
+
+								<!-- Email input -->
+								<div class="form-outline mt-2">
+									<label class="form-label" for="email">Seat Class</label>
+									<!-- <input
+										value="ECONOMY"
+										name="seatClass"
+										type="text"
+										id="seatClass"
+										class="form-control"
+										placeholder="FIRST/BUSINESS/ECONOMY"
+										required
+										autofocus
+									/> -->
+									<select class="form-select" aria-label="Default select example" id="seatClass" name="seatClass">
+										<option value="FIRST">First Class</option>
+										<option value="BUSINESS">Business Class</option>
+										<option value="PREMIUM_ECONOMY">Premium Economy</option>
+										<option value="ECONOMY" selected>Economy</option>
+									  </select>
+								</div>
+
+								<div class="form-outline mt-2">
+									<label class="form-label" for="email">Date</label>
+									<!-- value="2022-03-30" -->
+									<input
+										name="date"
+										type="date"
+										id="date"
+										class="form-control"
+										required
+										autofocus
+									/>
+								</div>
+
+								<div class="text-center">
+									<input
+										type="submit"
+										class="btn btn-primary btn-lg mt-4"
+										style="padding-left: 2.5rem; padding-right: 2.5rem"
+										value="Search"
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div id="results">
+			<table id="resultsTable" class="table table-striped border-1">
+				<thead class="border-1">
+					<th>airlineName</th>
+					<th>destAirport</th>
+					<th>Price</th>
+					<th>sourceAP</th>
+					<th>Booking</th>
+				</thead>
+			</table>
+		</div>
+		<label id="error" class="text-danger"></label>
+
+		<!-- Bootstrap core JS-->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+		<!-- Core theme JS-->
+		<script src="js/scripts.js"></script>
+		<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+		<!-- * *                               SB Forms JS                               * *-->
+		<!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+		<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+		<script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+
+		<!-- Bootstrap Bundle with Popper -->
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+			crossorigin="anonymous"
+		></script>
+	</body>
+
+	<script>
+		let today = new Date()
+		year = today.getFullYear()
+		month = (today.getMonth()+1 < 10) ? "0"+(today.getMonth()+1).toString() : (today.getMonth() +1).toString();
+		day = (today.getDate() < 10) ? "0"+(today.getDate()).toString() : (today.getDate()).toString();
+		now = year +'-'+month+'-'+day;
+		console.log(now);
+
+		
+		document.getElementById('date').value = now.toString();
+		document.getElementById('date').setAttribute('min',now)
+
+
+		async function getPred(item) {
+			node = $("#" + item.id);
+			var serviceURL = "http://localhost:3000/getPred";
+			try {
+				const response = await fetch(serviceURL, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						text: item.value,
+					}),
+				});
+				const data = await response.json();
+				results = data.data.data; 
+				if (response.ok) {
+					autocomplete = [];
+					console.log('Look here');
+					console.log(results);
+					recommendations = results.recommendationAirportOrArea;
+					if (recommendations.length == 0) {
+						autocomplete = [
+							{
+								label: "There is no such place",
+								value: "No such place",
+							},
+						];
+
+						node = $("#" + item.id);
+						node.autocomplete({
+							minLength: 0,
+							source: function (request, response) {
+								response(autocomplete);
+							},
+						});
+
+						return;
+					} else {
+						console.log(recommendations);
+
+						for (i = 0; i < Math.min(recommendations.length, 4); i++) {
+							if (recommendations[i].airportDisplay == null) {
+								autocomplete.push({
+									label: "All places in " + recommendations[i].areaDisplay.name,
+									value: recommendations[i].code,
+								});
+							} else {
+								autocomplete.push({
+									label: "Airport:" + recommendations[i].airportDisplay.name,
+									value: recommendations[i].code,
+								});
+							}
+						}
+						node = $("#" + item.id);
+						node.autocomplete({
+							minLength: 0,
+							source: function (request, response) {
+								response(autocomplete);
+							},
+						});
+					}
+				} else {
+					showError(data.message);
+				}
+			} catch (error) {}
+		}
+
+		function logout() {
+			localStorage.removeItem("token");
+			location.href = "../../User Interfaces/login.html";
+		}
+		var flightDate = "";
+		// Helper function to display error message
+		function showError(message) {
+			// Display an error under the the predefined label with error as the id
+			$("#results").hide();
+			$("#error").text(message);
+			$("#error").show();
+		}
+
+		$(function () {
+			$("#results").hide();
+
+			//This is considered an event call
+			//It listens to the isbnForm <form id="isbnForm">
+			//When submitted button is clicked it perform a series of actions through a function
+			$("#flightForm").submit(async (event) => {
+				//Prevents screen from refreshing when submitting as we are not going to another page
+				event.preventDefault();
+
+				$("#error").hide();
+				// 1. Signup page => Main Page (index.html) => Display Below => Booking UI
+				//Get ISBN Number from the form
+				var numAdults = $("#numAdults").val();
+				var numChildren = $("#numChildren").val();
+				var numInfants = $("#numInfants").val();
+				var destAirport = $("#DestAirport").val();
+				var sourceAirport = $("#SourceAirport").val();
+				var seatClass = $("#seatClass").val();
+				flightDate = $("#date").val();
+				var serviceURL = "http://localhost:3000/getResults";
+
+				try {
+					const response = await fetch(serviceURL, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							numAdults: numAdults,
+							numChildren: numChildren,
+							Infants: numInfants,
+							dAP: destAirport,
+							sAP: sourceAirport,
+							seatClass: seatClass,
+							date: flightDate,
+						}),
+					});
+					
+					const data = await response.json();
+					console.log(data);
+					results = data.data.flights; // the actual data is within another data element of the retrieved data
+					
+					if (response.ok) {
+						console.log(results);
+						rtn = "";
+						if (results.airlineID.length == 0) {
+							alert(
+								"Oops! There are no flights on this date. Try another one!"
+							);
+							return
+						} else {
+							for (i = 0; i < results.airlineID.length; i++) {
+								console.log("look here", data.data.airportDataMap[results.destAP[i]]);
+								console.log('destAP', );
+								rtn +=
+									"<tr>" +
+									"<td>" +
+									data.data.airlineDataMap[results.airlineID[i]].name +
+									"</td>" +
+									"<td>" +
+									data.data.airportDataMap[results.destAP[i]].localName +
+									"</td>" +
+									"<td>" +
+									"$" +
+									parseFloat(
+										results.price[i].amount.slice(0, -2) +
+											"." +
+											results.price[i].amount.slice(-2)
+									).toFixed(2) +
+									"</td>" +
+									"<td>" +
+									data.data.airportDataMap[results.sourceAP[i]].localName +
+									"</td>" +
+									"<td>" +
+									"<button onclick='booknow(this.parentNode.parentNode)'>" +
+									"Book Now" +
+									"</button>";
+								"</td>" + "</tr>";
+							}
+						}
+
+						// $('#message').hide();
+						$("#results").show();
+						$("#resultsTable tbody").empty();
+						$("#resultsTable").append(rtn);
+						document.getElementById("resultsTable").scrollIntoView(true);
+					} else {
+						showError(data.message);
+					}
+				} catch (error) {
+					// Errors when calling the service; such as network error,
+					// service offline, etc
+					showError(
+						"There is a problem with retrieving the Flights data. Please try again later, or contact Shaan at 86931659.<br />" +
+							error
+					);
+				}
+			});
+		});
+
+		function booknow(e) {
+			console.log(e);
+
+			airlineID = e.childNodes[0].innerHTML;
+			destAP = e.childNodes[1].innerHTML;
+			price = e.childNodes[2].innerHTML;
+			sourceAP = e.childNodes[3].innerHTML;
+
+			// localStorage is used instead of sessionStorage to access data across different pages
+			localStorage.setItem("airlineID", airlineID);
+			localStorage.setItem("destAP", destAP);
+			localStorage.setItem("price", price);
+			localStorage.setItem("sourceAP", sourceAP);
+			localStorage.setItem("flightDate", flightDate);
+
+			window.location.href = "BookingUI.html";
+		}
+	</script>
+</html>
