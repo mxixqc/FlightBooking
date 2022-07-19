@@ -25,3 +25,10 @@ created by G1T1 for SMU ESD IS213
 
 
 Copyright ESD IS213 G1T1 2022
+Credits to: 
+- https://github.com/WiselyKwek/
+- https://github.com/guga-nesh
+- https://github.com/geraldnxw
+- https://github.com/HoYongQuan
+- https://github.com/xiaozhang8888
+
