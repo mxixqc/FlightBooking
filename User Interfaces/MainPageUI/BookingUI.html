@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- Paypal Script -->
+    <script src="https://www.paypal.com/sdk/js?client-id=Ae-V9sEnhvTOshkGloG_u32-i2trPis9TjLz5cK6ZbPKiNbx-KV3gKdJ4U2Q2tSj7RbBz5z_P5ChcmU9"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    
+    <!-- AXIOS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- JQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="../public/bookingUI.css">
+
+    <title>Booking UI</title>
+</head>
+<body>
+  <!-- Navigation-->
+  <nav class="navbar navbar-light bg-light static-top">
+    <div class="container">
+      <a class="navbar-brand" href="#!">G1T1 Flight Booking System</a>
+      <a class="btn btn-primary" href="./BookingHistoryUI.html">Past Bookings</a>
+    </div>
+    <a class="btn btn-danger" onclick="logout()">Logout</a>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- First Column for Payment Details -->
+      <div class="col">
+        <h3>Payment Details</h3>
+        <form>
+          <!-- Passenger Details  -->
+          <div class="form-row">
+            <h4>(Passenger Details) People who are coming on the flight</h4>
+            
+            <!-- Passenger First Name -->
+            <div class="form-group">
+              <label for="pFName">First Name</label>
+              <input type="text" class="form-control" id="passFName" placeholder="Passenger First Name" required>
+            </div>
+
+            <!-- Passenger Last Name -->
+            <div class="form-group">
+              <label for="pLName">Last Name</label>
+              <input type="text" class="form-control" id="passLName" placeholder="Passenger Last Name" required>
+            </div>
+
+            <!-- Passenger mobile numbder  -->
+            <div class="form-group">
+              <label for="MNumber">Mobile Number</label>
+              <input type="number" class="form-control" id="passMNumber" placeholder="Passenger Mobile Number" required>
+            </div>
+
+            <!-- Passenger Baggage Details -->
+            <h4>Baggage Details</h4>
+            <div class="form-group">
+              <label for="AddWeight">Add-On Luagge Weight</label>
+              <input type="text" class="form-control" id="AddWeight" placeholder="Add-on luagge weight">
+            </div>
+            
+            <!-- Added Cost details -->
+            <div class="form-group">
+              <label for="AddCost">Added Cost</label>
+              <input class="form-control" type="text" placeholder="Your added cost" readonly>
+            </div>
+        
+            <!-- Payer Details -->
+            <h4>(Payer Details) Who is paying</h4>
+
+            <!-- Payer Salutation -->
+            <div class="form-group col-md-4">
+              <label for="inputSalutation">Salutation</label>
+              <select id="inputSalutation" class="form-control">
+                <option selected>Mr</option>
+                <option>Mrs</option>
+                <option>Mdm</option>
+                <option>Dr</option>
+              </select>
+            </div>
+
+            <!-- Payer First Name -->
+            <div class="form-group">
+              <label for="payFName">Payer First Name</label>
+              <input type="text" class="form-control" id="payFName" placeholder="Payer First Name">
+            </div>
+
+            <!-- Payer Last Name -->
+            <div class="form-group">
+              <label for="payLName">Payer Last Name</label>
+              <input type="text" class="form-control" id="payLName" placeholder="Payer Last Name">
+            </div>
+
+            <!-- Payer DOB -->
+            <div class="form-group">
+              <label for="payDOB">Date of Birth</label>
+              <input type="text" class="form-control" id="payDOB" placeholder="Payer Date of Birth">
+            </div>
+
+            <!-- Payer Email -->
+            <div class="form-group">
+              <label for="payEmail">Email</label>
+              <input type="email" class="form-control" id="payEmail" placeholder="Payer Email" required>
+            </div>
+
+          <!-- end of form-row -->
+          </div>
+
+          <!-- Paypal button -->
+          <h1> Paypal Payment</h1>
+          <div id="paypal-button-container"></div>
+
+        <!-- end of form -->
+        </form>
+      <!-- end of first col -->
+      </div>
+
+      <!-- Second Column to show flight details from previous page -->
+      <div class="col">
+        <h3>Flight Details</h3>
+        <table class="table">
+          
+          <tbody>
+            <tr>
+              <th scope="row">Destination Airport</th>
+              <td id="destAP"></td>
+            </tr>
+            <tr>
+              <th scope="row">Departure Airport</th>
+              <td id="deptAP"></td>
+             
+            </tr>
+            <tr>
+              <th scope="row">Date</th>
+              <td id="deptDate"></td>
+            </tr>
+            <tr>
+              <th scope="row">Flight Symbol</th>
+              <td id="airlineID"></td>
+            </tr>
+          </tbody>
+        </table>
+
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // logout function
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("sourceAP");
+      localStorage.removeItem("destAP");
+      localStorage.removeItem("__paypal_storage__");
+      localStorage.removeItem("price");
+      localStorage.removeItem("flightDate");
+      localStorage.removeItem("airlineID");
+      
+      location.href = "../login.html";
+    }
+    
+    // Flight data passed from FlightSearchUI accessed from localStorage
+    var airlineID = localStorage.getItem('airlineID')
+    var destAP = localStorage.getItem('destAP')
+    var sourceAP = localStorage.getItem('sourceAP')
+    var totalPrice = localStorage.getItem('price').slice(1)
+    var flightDate = localStorage.getItem('flightDate')
+    var token = localStorage.getItem('token')
+
+    // populate flight details table with data from localStorage
+    $('#destAP').append(destAP)
+    $('#deptAP').append(sourceAP)
+    $('#deptDate').append(flightDate)
+    $('#airlineID').append(airlineID)
+    
+
+    // create global variables for addedLuggageCosts and newTotalPrice
+    var addedLuggageCosts = 0.0
+    var newTotalPrice = 0.0
+
+
+    // Paypal button functionality
+    paypal.Buttons({
+      // Sets up the transaction when a payment button is clicked
+      createOrder: function(data, actions) {
+
+        // calculating new total price include added luggage costs
+        addedLuggageCosts = calculateAddedWeight($("#AddWeight").val())
+        newTotalPrice = parseFloat(addedLuggageCosts) + parseFloat(totalPrice)
+        console.log(newTotalPrice)
+
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: newTotalPrice // price including luggage add on
+            }
+          }]
+        });
+      },
+
+      // Finalize the transaction after payer approval
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(orderData) {
+              // Successful capture! For dev/demo purposes:
+              // console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+              console.log(orderData);
+              var transaction = orderData.purchase_units[0].payments.captures[0];
+              console.log(orderData.status) // "COMPLETED"
+
+              if(orderData.status == "COMPLETED"){
+
+                var passFirstName = $("#passFName").val()
+                var passLastName = $("#passLName").val()
+                var passDOB = $("#passDOB").val()
+                
+                var payerSalutation = $("#inputSalutation").val()
+                var payerFirstName = $("#payFName").val()
+                var payerLastName = $("#payLName").val()
+                var payerEmail = $("#payEmail").val()
+
+
+                const bookingData = {
+                  "bookingDetails":{
+                    "passenger":{
+                      "fname":passFirstName,
+                      "lname":passLastName,
+                      "dob":passDOB
+                    },
+                    "payer":{
+                      "salutation": payerSalutation,
+                      "fname":payerFirstName,
+                      "lname":payerLastName,
+                      "email":payerEmail
+                    },
+                    "flightDetails":{
+                      "airlineID":airlineID,
+                      "destAP": destAP,
+                      "sourceAP":sourceAP,
+                      "flightDate":flightDate,
+                      "totalPrice": newTotalPrice
+                    },
+                    "token": token
+                  }
+                }
+
+
+                axios.post('http://localhost:5100/notification', bookingData)
+                    .then(function (response) {
+                      window.location.href = './completed.html'
+                      console.log(response);
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                    });
+              }
+          // When ready to go live, remove the alert and show a success message within this page. For example:
+          // var element = document.getElementById('paypal-button-container');
+          // element.innerHTML = '';
+          // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+          // Or go to another URL:  actions.redirect('thank_you.html');
+        });
+      }
+    }).render('#paypal-button-container');
+
+    function calculateAddedWeight(inputWeight){
+      // assume extra $50 per 1kg
+      return inputWeight * 50
+    }
+
+  </script>
+  
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+</body>
+</html>
